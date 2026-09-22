@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4f46e5">
+<title>小丁钢琴课 · 课时预约</title>
+<link rel="icon" href="logo.svg">
+<link rel="apple-touch-icon" href="logo.svg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="wx-tip" class="wx-tip hidden">
+  <b>建议在浏览器中打开</b>
+  <span>点右上角 <i class="wx-more">···</i> → 选「在浏览器打开」，用起来更顺</span>
+</div>
+
+<!-- 首页：选身份 -->
+<section id="screen-home" class="screen">
+  <div class="brand">
+    <svg class="staff-deco" viewBox="0 0 190 24" width="190" height="24" aria-hidden="true">
+      <line x1="0" y1="4" x2="190" y2="4" stroke="var(--border-strong)" stroke-width="1"/>
+      <line x1="0" y1="9" x2="190" y2="9" stroke="var(--border-strong)" stroke-width="1"/>
+      <line x1="0" y1="14" x2="190" y2="14" stroke="var(--border-strong)" stroke-width="1"/>
+      <line x1="0" y1="19" x2="190" y2="19" stroke="var(--border-strong)" stroke-width="1"/>
+      <ellipse cx="48" cy="14" rx="5" ry="3.6" fill="var(--gold)" transform="rotate(-20 48 14)"/>
+      <rect x="52" y="2" width="1.8" height="12.4" fill="var(--gold)"/>
+      <ellipse cx="126" cy="9" rx="5" ry="3.6" fill="var(--gold)" transform="rotate(-20 126 9)"/>
+      <rect x="130" y="-3" width="1.8" height="12.4" fill="var(--gold)"/>
+    </svg>
+    <img class="brand-logo" src="logo.svg" alt="小丁钢琴课" width="92" height="92">
+    <h1>小丁钢琴课</h1>
+    <p class="sub">用心教好每一个音符</p>
+  </div>
+  <div class="role-list">
+    <button class="role-card" data-go="parent">
+      <span class="role-title">我是家长</span>
+      <span class="role-desc">输入手机号，自己挑时间约课</span>
+    </button>
+    <button class="role-card" data-go="teacher">
+      <span class="role-title">我是老师</span>
+      <span class="role-desc">录学员、开时段、看课表、记课时</span>
+    </button>
+  </div>
+</section>
+
+<!-- 家长端 -->
+<section id="screen-parent" class="screen hidden">
+  <div id="parent-gate" class="gate">
+    <div class="gate-box">
+      <h2>家长进入</h2>
+      <p class="hint">填你留给老师的那个手机号，就能给孩子约课。</p>
+      <input id="phone-input" class="input name-input" type="tel" inputmode="numeric" maxlength="11" autocomplete="off" placeholder="家长手机号">
+      <button id="phone-submit" class="btn btn-primary btn-block">进入</button>
+      <p id="gate-error" class="error-msg hidden"></p>
+      <button class="link-btn" data-go="home">返回</button>
+    </div>
+  </div>
+
+  <div id="parent-picker" class="gate hidden">
+    <div class="gate-box">
+      <h2>找到不止一个同名的孩子</h2>
+      <p class="hint">请点你要进入的那一个。如果分不清，请联系老师。</p>
+      <div id="picker-list" class="role-list"></div>
+      <button id="picker-back" class="link-btn">重新输入名字</button>
+    </div>
+  </div>
+
+  <div id="parent-main" class="hidden">
+    <div class="app-head">
+      <div class="app-head-top">
+        <img class="app-logo" src="logo.svg" alt="" width="30" height="30">
+        <span class="app-head-brand">小丁钢琴课</span>
+      </div>
+      <h1 class="app-head-title" id="p-student-name">—</h1>
+      <div id="p-kids" class="kid-tabs hidden"></div>
+      <p class="app-head-sub" id="p-student-sub"></p>
+    </div>
+
+    <section class="hero">
+      <div class="hero-label">还剩</div>
+      <div class="hero-value"><b id="p-remain">0</b><span>节课</span></div>
+      <div class="hero-meta">已上 <span id="p-used">0</span> 节 · 共 <span id="p-total">0</span> 节</div>
+    </section>
+
+    <div id="p-next" class="next-card hidden">
+      <div class="next-mark"></div>
+      <div class="next-body">
+        <div class="next-label">下次上课</div>
+        <div class="next-value" id="p-next-value"></div>
+      </div>
+    </div>
+
+    <section class="block">
+      <h2 class="block-title">可约时间</h2>
+      <div id="p-cal" class="calendar"></div>
+      <div id="p-slots"></div>
+    </section>
+
+    <section class="block">
+      <h2 class="block-title">我的课</h2>
+      <div id="p-bookings" class="list"></div>
+    </section>
+
+    <div class="app-foot">
+      <button class="link-btn" id="parent-exit">退出</button>
+      <button class="link-btn" data-go="home">返回首页</button>
+    </div>
+  </div>
+</section>
+
+<!-- 老师端 -->
+<section id="screen-teacher" class="screen hidden">
+  <div id="teacher-auth" class="gate">
+    <div class="gate-box">
+      <h2>老师登录</h2>
+      <p class="hint">网页版只能用邮箱登录。第一次用请先注册。</p>
+
+      <nav class="tabs tabs-sm" data-tabs="auth">
+        <button class="tab active" data-pane="pane-otp">验证码登录</button>
+        <button class="tab" data-pane="pane-pwd">密码登录</button>
+      </nav>
+
+      <div id="pane-otp" class="pane">
+        <input id="otp-email" class="input" type="email" autocomplete="email" placeholder="邮箱">
+        <div class="row">
+          <input id="otp-code" class="input" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="邮件验证码">
+          <button id="otp-send" class="btn btn-ghost btn-inline">获取验证码</button>
+        </div>
+        <div id="otp-signup-extra" class="hidden">
+          <input id="otp-password" class="input" type="password" autocomplete="new-password" placeholder="设置登录密码（新账号必填，至少 6 位）">
+        </div>
+        <button id="otp-submit" class="btn btn-primary btn-block">登录 / 注册</button>
+      </div>
+
+      <div id="pane-pwd" class="pane hidden">
+        <input id="pwd-email" class="input" type="email" autocomplete="email" placeholder="邮箱">
+        <input id="pwd-password" class="input" type="password" autocomplete="current-password" placeholder="密码">
+        <button id="pwd-submit" class="btn btn-primary btn-block">登录</button>
+        <button id="pwd-forgot" class="link-btn">忘记密码？</button>
+      </div>
+
+      <p id="auth-error" class="error-msg hidden"></p>
+      <button class="link-btn" data-go="home">返回</button>
+    </div>
+  </div>
+
+  <div id="teacher-main" class="hidden">
+    <header class="topbar">
+      <button class="icon-btn" data-go="home" title="返回">&#8249;</button>
+      <div class="topbar-title">
+        <b>老师管理</b>
+        <span id="t-email" class="topbar-sub"></span>
+      </div>
+      <button class="icon-btn" id="teacher-logout" title="退出登录">&#8943;</button>
+    </header>
+
+    <nav class="tabs" data-tabs="teacher">
+      <button class="tab active" data-pane="pane-schedule">课表</button>
+      <button class="tab" data-pane="pane-open">开时段</button>
+      <button class="tab" data-pane="pane-students">学员</button>
+      <button class="tab" data-pane="pane-stats">统计</button>
+    </nav>
+
+    <div id="pane-schedule" class="pane">
+      <div id="t-schedule" class="list"></div>
+    </div>
+
+    <div id="pane-open" class="pane hidden">
+      <div class="card">
+        <h3>开放可约时段</h3>
+        <p class="field-hint">在日历上点日期（可多选，能翻月跨着选），设好时间规则，一次给这些天都排上。</p>
+        <div id="t-cal" class="calendar"></div>
+        <div id="slot-picked" class="picked-bar hidden">
+          <span>已选 <b id="slot-picked-count">0</b> 天</span>
+          <button type="button" id="slot-picked-clear">清空</button>
+        </div>
+        <div class="form-grid">
+          <label>每天几点开始<input id="slot-start" class="input" type="time" min="08:00" max="21:30" value="08:00"></label>
+          <label>每节时长
+            <div class="seg" id="slot-duration-seg">
+              <button type="button" class="seg-btn active" data-min="60">1 小时</button>
+              <button type="button" class="seg-btn" data-min="30">半小时</button>
+            </div>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" id="slot-allow-half">
+            <span>家长也可以只约半小时（上 1 小时或 30 分钟自己挑）</span>
+          </label>
+          <label>课间休息（分钟）<input id="slot-gap" class="input" type="number" value="10" min="0" max="60" step="5"></label>
+          <label>每天排几节<input id="slot-count" class="input" type="number" value="4" min="1" max="30"></label>
+        </div>
+        <p id="slot-hint" class="field-hint"></p>
+        <button id="slot-create" class="btn btn-primary btn-block">为选中的日期开放时段</button>
+      </div>
+      <h3 class="list-head">已开放、还没人约的时段</h3>
+      <div id="t-open-slots" class="list"></div>
+    </div>
+
+    <div id="pane-students" class="pane hidden">
+      <div class="card">
+        <h3>添加学员</h3>
+        <div class="form-grid">
+          <label>孩子姓名<input id="stu-name" class="input" type="text" placeholder="例如 陈小雅"></label>
+          <label>家长手机号（家长用它进入）<input id="stu-phone" class="input" type="tel" inputmode="numeric" maxlength="11" placeholder="11 位手机号"></label>
+          <label>总课时<input id="stu-total" class="input" type="number" value="20" min="0" max="500"></label>
+          <label>备注（可选）<input id="stu-note" class="input" type="text" placeholder="例如 妈妈"></label>
+        </div>
+        <button id="stu-create" class="btn btn-primary btn-block">添加学员</button>
+      </div>
+      <h3 class="list-head">学员名单</h3>
+      <div id="t-students" class="list"></div>
+    </div>
+
+    <div id="pane-stats" class="pane hidden">
+      <button type="button" id="stat-pending" class="pending-card hidden"></button>
+      <div class="seg" id="stat-range">
+        <button type="button" class="seg-btn active" data-range="month">本月</button>
+        <button type="button" class="seg-btn" data-range="last">上月</button>
+        <button type="button" class="seg-btn" data-range="all">全部</button>
+      </div>
+      <div id="stat-cards" class="stat-cards"></div>
+      <p id="stat-note" class="field-hint"></p>
+      <h3 class="list-head">按月记录</h3>
+      <div id="stat-months"></div>
+      <h3 class="list-head">按学员</h3>
+      <div id="stat-students" class="list"></div>
+      <button id="stat-copy" class="btn btn-ghost btn-block">复制统计结果</button>
+    </div>
+  </div>
+</section>
+
+<div id="toast" class="toast hidden"></div>
+
+<div id="modal" class="modal hidden">
+  <div class="modal-box">
+    <h3 id="modal-title"></h3>
+    <p id="modal-text" class="modal-text"></p>
+    <div id="modal-choices" class="modal-choices hidden"></div>
+    <div id="modal-form" class="modal-form hidden"></div>
+    <input id="modal-input" class="input hidden" type="text">
+    <div class="modal-actions">
+      <button id="modal-cancel" class="btn btn-ghost">取消</button>
+      <button id="modal-ok" class="btn btn-primary">确定</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
